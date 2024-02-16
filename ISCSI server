@@ -1,1 +1,28 @@
+print "#### This script will install iscsi server #####
+##### ISCSI server for partition and shared storage #####
+vi /etc/hosts
+yum install targetcli lvm2
+fdisk -l | grep -i sd
+pvcreate /dev/sdb
+vgcreate vg_iscsi /dev/sdb
+lvcreate -l 100%FREE -n lv_iscsi vg_iscsi
+targetcli
+cd /backstores/block
+create iscsi_shared_storage /dev/vg_iscsi/lv_iscsi
+cd /iscsi
+create iqn.1994-05.com.redhat:1fd2a853
+create iqn.1994-05.com.redhat:b4cb80905bb8
+ls
+cd
+create /backstores/block/iscsi_shared_storage
+cd
+ls
+saveconfig
+exit
+systemctl restart target
+systemctl enable target
+##start and enable iscsi service
+firewall-cmd --permanent --add-port=3260/tcp
+firewall-cmd --reload
+ip a
 
