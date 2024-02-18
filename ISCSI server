@@ -1,14 +1,21 @@
 print "#### This script will install iscsi server #####
 ##### ISCSI server for partition and shared storage #####
+##### Enter all node's hostname and ip address #####
 vi /etc/hosts
+##### yum will download and installed the packages along with necessary dependencies #####
 yum install targetcli lvm2
+##### Infomation about disk and partitions detected by the system #####
 fdisk -l | grep -i sd
+##### Create volumes #####
 pvcreate /dev/sdb
 vgcreate vg_iscsi /dev/sdb
 lvcreate -l 100%FREE -n lv_iscsi vg_iscsi
 targetcli
+ls
 cd /backstores/block
 create iscsi_shared_storage /dev/vg_iscsi/lv_iscsi
+create
+ls
 cd /iscsi
 create iqn.1994-05.com.redhat:1fd2a853
 create iqn.1994-05.com.redhat:b4cb80905bb8
@@ -21,7 +28,7 @@ saveconfig
 exit
 systemctl restart target
 systemctl enable target
-##start and enable iscsi service
+##### Start and enable iscsi service #####
 firewall-cmd --permanent --add-port=3260/tcp
 firewall-cmd --reload
 ip a
